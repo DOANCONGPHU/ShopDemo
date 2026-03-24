@@ -23,14 +23,19 @@ class ProductDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "ShopDemo"
-        viewModel.onProductDetailUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.configure()
-            }
-        }
+        setupViewModel()
+        setupCollectionView()
+    }
+    
+    private func setupViewModel(){
+        viewModel.delegate = self
         if let id = productID {
             viewModel.fetchProductDetail(id: id)
         }
+        
+    }
+    
+    private func setupCollectionView() {
         collectionViewProduct.dataSource = self
         collectionViewProduct.delegate = self
 
@@ -47,36 +52,36 @@ class ProductDetailViewController: UIViewController {
     }
     
     func configure() {
-        guard let product = viewModel.productDetail else {return}
+        guard let product = viewModel.productDetail else { return }
+        
         nameLabel.text = product.title
-        priceLabel.text =  "$\(product.price)"
+        priceLabel.text = "$\(product.price)"
         ratingLabel.text = "⭐ \(product.rating)"
         describleTxt.text = product.description
         
-        guard let url = URL(string: product.thumbnail) else { return }
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let data = data {
-                DispatchQueue.main.async {
-                    self.imageViewProduct.image = UIImage(data: data)
-                }
-            }
-        }.resume()
+        loadImage(from: product.thumbnail, into: imageViewProduct)
         
         collectionViewProduct.reloadData()
-            
-
-        DispatchQueue.main.async {
-            guard !product.images.isEmpty else { return }
-            self.collectionViewProduct.selectItem(
-                at: IndexPath(item: 0, section: 0),
-                animated: false,
-                scrollPosition: .left
-            )
-        }
+        
+        guard !product.images.isEmpty else { return }
+        collectionViewProduct.selectItem(
+            at: IndexPath(item: 0, section: 0),
+            animated: false,
+            scrollPosition: .left
+        )
     }
 
-
+    private func loadImage(from urlString: String, into imageView: UIImageView) {
+        guard let url = URL(string: urlString) else { return }
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            guard let data = data else { return }
+            DispatchQueue.main.async {
+                imageView.image = UIImage(data: data)
+            }
+        }.resume()
+    }
 }
+
 extension ProductDetailViewController : UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.productDetail?.images.count ?? 0
@@ -101,4 +106,23 @@ extension ProductDetailViewController : UICollectionViewDelegate, UICollectionVi
         }.resume()
 
     }
+}
+extension ProductDetailViewController : HomeViewModelDelegate {
+    func didUpdateProductDetail() {
+        DispatchQueue.main.async {
+            self.configure()
+        }
+    }
+    
+    func didFailWithError(_ message: String) {
+        print("Error: \(message)")
+    }
+    
+    func didUpdateCategories() {}
+    func didUpdateSearchResults() {}
+    func didUpdateProducts() {}
+    func didUpdateBanners() {}
+    
+    
+    
 }

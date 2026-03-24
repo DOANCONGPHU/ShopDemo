@@ -7,21 +7,23 @@
 
 import Foundation
 
-class HomeViewModel {
+protocol HomeViewModelDelegate: AnyObject {
+    func didUpdateProducts()
+    func didUpdateBanners()
+    func didUpdateProductDetail()
+    func didFailWithError(_ message: String)
+    func didUpdateCategories()
+    func didUpdateSearchResults()
+}
 
+class HomeViewModel {
+    weak var delegate: HomeViewModelDelegate?
     var filteredProducts: [Product] = []
     var banners: [Product] = []
     var products : [Product] = []
     var categories: [Category] = []
     var productDetail: Product?
     var productSearch: [Product] = []
-    
-    var onProductsUpdated: (() -> Void)?
-    var onCategoriesUpdated: (() -> Void)?
-    var onBannersUpdated: (() -> Void)?
-    var onProductDetailUpdated: (() -> Void)?
-    var onError: ((String) -> Void)?
-    var onProductSearchUpdated: (() -> Void)?
     
     func fetchAll() {
         fetchBanners()
@@ -34,9 +36,9 @@ class HomeViewModel {
             switch result {
             case .success(let response):
                 self.banners = response.products
-                self.onBannersUpdated?()
+                delegate?.didUpdateBanners()
             case .failure(let error):
-                self.onError?(self.errorMessage(error))
+                delegate?.didFailWithError(self.errorMessage(error))
             }
         }
     }
@@ -47,9 +49,9 @@ class HomeViewModel {
             case .success(let categories):
                 let allCategory = Category(slug: "all", name: "All", url: "")
                 self.categories = [allCategory] + categories
-                self.onCategoriesUpdated?()
+                delegate?.didUpdateCategories()
             case .failure(let error):
-                self.onError?(self.errorMessage(error))
+                delegate?.didFailWithError(self.errorMessage(error))
             }
         }
     }
@@ -60,9 +62,9 @@ class HomeViewModel {
             switch result {
             case .success(let response):
                 self.filteredProducts = response.products
-                self.onProductsUpdated?()
+                delegate?.didUpdateProducts()
             case .failure(let error):
-                self.onError?(self.errorMessage(error))
+                delegate?.didFailWithError(self.errorMessage(error))
             }
         }
     }
@@ -77,9 +79,9 @@ class HomeViewModel {
             switch result {
             case .success(let response):
                 self.filteredProducts = response.products
-                self.onProductsUpdated?()
+                delegate?.didUpdateProducts( )
             case .failure(let error):
-                self.onError?(self.errorMessage(error))
+                delegate?.didFailWithError(self.errorMessage(error))
             }
         }
     }
@@ -90,9 +92,9 @@ class HomeViewModel {
             switch result {
             case.success(let response):
                 self.productDetail = response
-                self.onProductSearchUpdated?()
+                delegate?.didUpdateProductDetail()
             case .failure(let error):
-                self.onError?(self.errorMessage(error))
+                delegate?.didFailWithError(self.errorMessage(error))
             }
         }
     }
@@ -104,9 +106,9 @@ class HomeViewModel {
             switch result {
             case.success(let response):
                 self.productSearch = response.products
-                self.onProductSearchUpdated?()
+                delegate?.didUpdateSearchResults()
             case .failure(let error):
-                self.onError?(self.errorMessage(error))
+                delegate?.didFailWithError(self.errorMessage(error))
             }
         }
     }
