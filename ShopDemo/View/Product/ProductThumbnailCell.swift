@@ -20,4 +20,9 @@ class ProductThumbnailCell: UICollectionViewCell {
             layer.borderColor = UIColor.systemBlue.cgColor
         }
     }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = UIImage(named: "placeholder_icon")
+        self.layer.borderColor = UIColor.clear.cgColor
+    }
 }
