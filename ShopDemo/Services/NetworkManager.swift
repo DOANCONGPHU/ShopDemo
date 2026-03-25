@@ -5,7 +5,7 @@
 //  Created by gem on 20/3/26.
 //
 
-import Foundation
+import Alamofire
 
 enum NetworkError: Error {
     case noData
@@ -13,46 +13,41 @@ enum NetworkError: Error {
     case serverError(Int)
     case invalidURL
 }
+
 class NetworkManager {
     static let shared = NetworkManager()
-    
     private init() {}
     private let baseURL = "https://dummyjson.com"
-    func fetch<T: Codable>(
-        endpoint: String,
-        completion: @escaping (Result<T, NetworkError>) -> Void
-    ){
-        guard let url = URL(string: baseURL + endpoint) else{
+    
+    func fetch<T : Codable>(
+    endpoint: String,
+    completion: @escaping (Result<T, NetworkError>) -> Void
+    ) {
+        guard let url = URL(string: baseURL + endpoint) else {
             completion(.failure(.invalidURL))
             return
         }
-        //goi api
-        URLSession.shared.dataTask(with: url) {data, response, error in
-            if error != nil {
-                completion(.failure(.noData))
-                return
-            }
-            if let httpResponse = response as? HTTPURLResponse,
-               !(200...299).contains(httpResponse.statusCode) {
-                completion(.failure(.serverError(httpResponse.statusCode)))
-                return
-            }
-            guard let data = data else {
-                completion(.failure(.noData))
-                return
-            }
-            do {
-                let decoded = try JSONDecoder().decode(T.self, from: data)
-                DispatchQueue.main.async {
-                    completion(.success(decoded))
+        // call api
+        AF.request(url)
+            .validate() //tự bắt các lỗi server
+            .responseDecodable(of: T.self) // tự decode JSON
+        { response in
+            switch response.result {
+            case .success(let data):
+                completion(.success(data))
+            case .failure(let error):
+                if let statusCode = response.response?.statusCode {
+                    completion(.failure(.serverError(statusCode)))
+                } else if error.isSessionTaskError {
+                    completion(.failure(.noData))
                 }
-            } catch {
-                print("Decoding error: \(error)")
-                completion(.failure(.decodingError))
+                else {
+                    completion(.failure(.decodingError))
+                }
             }
-            
-        }.resume()
+        }
     }
+    
     func fetchProducts(completion: @escaping (Result<ProductResponse, NetworkError>) -> Void) {
         fetch(endpoint: "/products", completion: completion)
     }
@@ -72,3 +67,48 @@ class NetworkManager {
         fetch(endpoint: "/products?limit=5", completion: completion)
     }
 }
+
+//import Foundation
+//
+//class NetworkManager {
+//    static let shared = NetworkManager()
+//    
+//    private init() {}
+//    private let baseURL = "https://dummyjson.com"
+//    func fetch<T: Codable>(
+//        endpoint: String,
+//        completion: @escaping (Result<T, NetworkError>) -> Void
+//    ){
+//        guard let url = URL(string: baseURL + endpoint) else{
+//            completion(.failure(.invalidURL))
+//            return
+//        }
+//        //goi api
+//        URLSession.shared.dataTask(with: url) {data, response, error in
+//            if error != nil {
+//                completion(.failure(.noData))
+//                return
+//            }
+//            if let httpResponse = response as? HTTPURLResponse,
+//               !(200...299).contains(httpResponse.statusCode) {
+//                completion(.failure(.serverError(httpResponse.statusCode)))
+//                return
+//            }
+//            guard let data = data else {
+//                completion(.failure(.noData))
+//                return
+//            }
+//            do {
+//                let decoded = try JSONDecoder().decode(T.self, from: data)
+//                DispatchQueue.main.async {
+//                    completion(.success(decoded))
+//                }
+//            } catch {
+//                print("Decoding error: \(error)")
+//                completion(.failure(.decodingError))
+//            }
+//            
+//        }.resume()
+//    }
+
+//}
