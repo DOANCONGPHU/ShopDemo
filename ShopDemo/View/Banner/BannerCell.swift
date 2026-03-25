@@ -11,8 +11,8 @@ class BannerCell: UITableViewCell {
     private var banners: [Product] = []
     
     @IBOutlet weak var collectionBanner: UICollectionView!
-    @IBOutlet weak var pageControl: UIPageControl!
-    
+    @IBOutlet weak var pageCtrl: UIPageControl!
+
     override func awakeFromNib() {
         super.awakeFromNib()
         collectionBanner.delegate = self
@@ -23,7 +23,7 @@ class BannerCell: UITableViewCell {
     func configure(with banners: [Product]) {
         guard !banners.isEmpty else { return }
         self.banners = banners
-        pageControl.numberOfPages = banners.count
+        pageCtrl.numberOfPages = banners.count
         collectionBanner.reloadData()
     }
 
@@ -45,7 +45,13 @@ extension BannerCell: UICollectionViewDataSource, UICollectionViewDelegate, UICo
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 160)
     }
-
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            let width = scrollView.frame.width
+            if width > 0 {
+                let currentPage = Int((scrollView.contentOffset.x + width / 2) / width)
+                pageCtrl.currentPage = currentPage
+            }
+        }
 
 
 }

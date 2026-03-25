@@ -58,8 +58,7 @@ class ProductDetailViewController: UIViewController {
         priceLabel.text = "$\(product.price)"
         ratingLabel.text = "⭐ \(product.rating)"
         describleTxt.text = product.description
-        
-        loadImage(from: product.thumbnail, into: imageViewProduct)
+        imageViewProduct.LoadImage(from: product.thumbnail)
         
         collectionViewProduct.reloadData()
         
@@ -71,15 +70,7 @@ class ProductDetailViewController: UIViewController {
         )
     }
 
-    private func loadImage(from urlString: String, into imageView: UIImageView) {
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            guard let data = data else { return }
-            DispatchQueue.main.async {
-                imageView.image = UIImage(data: data)
-            }
-        }.resume()
-    }
+
 }
 
 extension ProductDetailViewController : UICollectionViewDelegate, UICollectionViewDataSource {
@@ -97,14 +88,7 @@ extension ProductDetailViewController : UICollectionViewDelegate, UICollectionVi
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let url = viewModel.productDetail?.images[indexPath.item] ?? ""
-        guard let url = URL(string: url) else { return }
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            guard let data = data else { return }
-            DispatchQueue.main.async {
-                self.imageViewProduct.image =  UIImage(data: data)
-            }
-        }.resume()
-
+        imageViewProduct.LoadImage(from: url)
     }
 }
 extension ProductDetailViewController : HomeViewModelDelegate {

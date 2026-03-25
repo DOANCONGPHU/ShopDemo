@@ -26,16 +26,7 @@ class ProductCell: UITableViewCell {
         nameLabel.text = product.title
         priceLabel.text = "$\(product.price)"
         ratingLabel.text = "⭐ \(product.rating)"
-        if let url = URL(string: product.thumbnail) {
-            URLSession.shared.dataTask(with: url) { Data, _, _ in
-                if let data = Data, let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.productImageView.image = image
-                    }
-                }
-                
-            }.resume()
-        }
+        productImageView.LoadImage(from: product.thumbnail)
         
     }
 

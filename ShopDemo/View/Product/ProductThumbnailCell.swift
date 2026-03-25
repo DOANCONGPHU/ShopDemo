@@ -11,14 +11,7 @@ class ProductThumbnailCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     func configure(with imageUrl: String) {
-        guard let url = URL(string: imageUrl) else { return }
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-                if let data = data {
-                    DispatchQueue.main.async {
-                        self.imageView.image = UIImage(data: data)
-                    }
-            }
-        }.resume()
+        imageView.LoadImage(from: imageUrl)
     }
     override var isSelected: Bool {
         didSet {

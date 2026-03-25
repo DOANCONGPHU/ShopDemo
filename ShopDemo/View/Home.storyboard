@@ -3,6 +3,7 @@
     <device id="retina6_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -56,7 +57,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ebQ-95-z8O">
-                                                    <rect key="frame" x="0.0" y="8" width="440" height="160"/>
+                                                    <rect key="frame" x="0.0" y="8" width="440" height="284"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="160" id="3Qq-JU-Axe"/>
                                                     </constraints>
@@ -68,7 +69,7 @@
                                                     </collectionViewFlowLayout>
                                                     <cells>
                                                         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="BannerImageCell" id="L2v-47-rr1" customClass="BannerCollectionViewCell" customModule="ShopDemo" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="-0.66666666666666663" width="440" height="161"/>
+                                                            <rect key="frame" x="0.0" y="61.666666666666664" width="440" height="161"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="3St-0e-yRh">
                                                                 <rect key="frame" x="0.0" y="0.0" width="440" height="161"/>
@@ -100,24 +101,25 @@
                                                     </cells>
                                                 </collectionView>
                                                 <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="PhG-hy-I7w">
-                                                    <rect key="frame" x="183.66666666666666" y="172" width="72.999999999999972" height="20"/>
+                                                    <rect key="frame" x="183.66666666666666" y="264" width="72.999999999999972" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="JCC-hW-ePR"/>
                                                     </constraints>
+                                                    <color key="pageIndicatorTintColor" name="AccentColor"/>
                                                 </pageControl>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="PhG-hy-I7w" firstAttribute="top" secondItem="ebQ-95-z8O" secondAttribute="bottom" constant="4" id="Dg2-Z2-PKj"/>
                                                 <constraint firstItem="ebQ-95-z8O" firstAttribute="leading" secondItem="R6G-ne-R0a" secondAttribute="leading" id="En1-jQ-wPZ"/>
                                                 <constraint firstItem="ebQ-95-z8O" firstAttribute="top" secondItem="R6G-ne-R0a" secondAttribute="top" constant="8" id="KWQ-fR-f6F"/>
-                                                <constraint firstItem="PhG-hy-I7w" firstAttribute="centerX" secondItem="R6G-ne-R0a" secondAttribute="centerX" id="PuS-zx-bvX"/>
                                                 <constraint firstAttribute="trailing" secondItem="ebQ-95-z8O" secondAttribute="trailing" id="RJe-Pn-rWy"/>
-                                                <constraint firstAttribute="bottom" secondItem="PhG-hy-I7w" secondAttribute="bottom" priority="999" constant="8" id="eXA-31-BGB"/>
+                                                <constraint firstItem="PhG-hy-I7w" firstAttribute="centerX" secondItem="R6G-ne-R0a" secondAttribute="centerX" id="ceM-dT-f0h"/>
+                                                <constraint firstAttribute="bottom" secondItem="ebQ-95-z8O" secondAttribute="bottom" constant="8" id="fWW-T8-n3C"/>
+                                                <constraint firstItem="ebQ-95-z8O" firstAttribute="bottomMargin" secondItem="PhG-hy-I7w" secondAttribute="bottom" id="utK-HG-1Rt"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="collectionBanner" destination="ebQ-95-z8O" id="Gr9-QY-3AD"/>
-                                            <outlet property="pageControl" destination="PhG-hy-I7w" id="L9c-LO-VUS"/>
+                                            <outlet property="pageCtrl" destination="PhG-hy-I7w" id="KWn-Q2-ywr"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CategoryCell" id="99v-N1-JU6" customClass="CategoryCell" customModule="ShopDemo" customModuleProvider="target">
@@ -212,6 +214,9 @@
     </scenes>
     <resources>
         <image name="house.fill" catalog="system" width="128" height="104"/>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

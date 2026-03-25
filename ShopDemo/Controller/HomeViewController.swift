@@ -10,6 +10,7 @@ import UIKit
 class HomeViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     let viewModel = HomeViewModel()
+    var selectedCategoryIndex = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,6 +67,7 @@ extension HomeViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
             cell.config(with: viewModel.categories)
             cell.delegate = self
+            cell.selectedIndex = selectedCategoryIndex
             return cell
         }
     }
@@ -98,7 +100,8 @@ extension HomeViewController: UITableViewDelegate {
 
 
 extension HomeViewController: CategoryDelegate {
-    func didSelectCategory(_ category: Category) {
+    func didSelectCategory(_ category: Category,at index : Int) {
+        selectedCategoryIndex = index
         viewModel.fetchCategoryDetail(category: category)
     }
 }

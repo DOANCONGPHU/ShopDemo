@@ -8,14 +8,14 @@
 import UIKit
 
 protocol CategoryDelegate : AnyObject{
-    func didSelectCategory(_ category: Category)
+    func didSelectCategory(_ category: Category, at index : Int)
 }
 
 class CategoryCell: UITableViewCell {
     @IBOutlet weak var collectionCategories: UICollectionView!
     private var category : [Category] = []
     weak var delegate : CategoryDelegate?
-    
+    var selectedIndex = 0
     override func awakeFromNib() {
         super.awakeFromNib()
         collectionCategories.delegate = self
@@ -26,6 +26,12 @@ class CategoryCell: UITableViewCell {
         self.category = category
         self.collectionCategories.reloadData()
         
+        guard !category.isEmpty else { return }
+        collectionCategories.selectItem(
+            at: IndexPath(item: 0, section: 0),
+            animated: false,
+            scrollPosition: .left
+        )
     }
 
 }
@@ -36,8 +42,7 @@ extension CategoryCell : UICollectionViewDelegate, UICollectionViewDataSource, U
             return UICollectionViewCell()
         }
         let category = category[indexPath.row]
-        
-        cell.configure(with: category)
+        cell.configure(with: category, isSelected : indexPath.row == selectedIndex)
         return cell
     }
     
@@ -46,7 +51,8 @@ extension CategoryCell : UICollectionViewDelegate, UICollectionViewDataSource, U
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selected = category[indexPath.item]
-        delegate?.didSelectCategory(selected)
+        selectedIndex = indexPath.item
+        collectionView.reloadData()
+        delegate?.didSelectCategory(category[selectedIndex], at: selectedIndex)
     }
 }

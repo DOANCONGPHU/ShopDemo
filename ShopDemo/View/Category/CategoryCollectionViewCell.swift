@@ -10,22 +10,15 @@ import UIKit
 class CategoryCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var nameCategory: UILabel!
     
-    override var isSelected: Bool {
-        didSet {
-            updateUI()
-        }
-    }
-    func configure(with category: Category) {
+    func configure(with category: Category, isSelected: Bool) {
         nameCategory.text = category.name
-    }
-    
-    private func updateUI() {
         if isSelected {
-            contentView.backgroundColor = .systemBlue
+            backgroundColor = .systemBlue
             nameCategory.textColor = .white
         } else {
-            contentView.backgroundColor = .systemGray5
+            backgroundColor = .systemGray6
             nameCategory.textColor = .black
         }
     }
+    
 }
