@@ -24,3 +24,4 @@ class ImageCache {
         return cache.object(forKey: key as NSString)
     }
 }
+

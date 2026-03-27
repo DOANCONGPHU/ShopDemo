@@ -25,9 +25,14 @@ class ProductCell: UITableViewCell {
     func configure(with product: Product) {
         nameLabel.text = product.title
         priceLabel.text = "$\(product.price)"
-        ratingLabel.text = "⭐ \(product.rating)"
+        ratingLabel.text = getRatingStars(rating: product.rating)
         productImageView.LoadImage(from: product.thumbnail)
-        
     }
-
+    func getRatingStars(rating: Double) -> String {
+        let fullStars = Int(rating)
+        let emptyStars = 5 - fullStars
+        
+        let stars = String(repeating: "⭐ ", count: fullStars) + String(repeating: " ", count: emptyStars)
+        return "\(stars) \(rating)"
+    }
 }

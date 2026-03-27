@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1AB8025DDA09218F7858316E /* Pods_ShopDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F6B453D1C56F23D5EBFFA /* Pods_ShopDemo.framework */; };
+		B6B260132F7529BC009FFAFB /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B6B260122F7529BC009FFAFB /* Kingfisher */; };
+		B6CF2F192F767227002F0ACC /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B6CF2F182F767227002F0ACC /* FirebaseAuth */; };
+		B6CF2F1B2F767227002F0ACC /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B6CF2F1A2F767227002F0ACC /* FirebaseCore */; };
+		B6CF2F1D2F767227002F0ACC /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B6CF2F1C2F767227002F0ACC /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +47,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6B260132F7529BC009FFAFB /* Kingfisher in Frameworks */,
+				B6CF2F192F767227002F0ACC /* FirebaseAuth in Frameworks */,
+				B6CF2F1B2F767227002F0ACC /* FirebaseCore in Frameworks */,
+				B6CF2F1D2F767227002F0ACC /* FirebaseFirestore in Frameworks */,
 				1AB8025DDA09218F7858316E /* Pods_ShopDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,6 +142,10 @@
 			);
 			mainGroup = B6C581BC2F6A9D5B00A8AA4E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B6B260112F7529BC009FFAFB /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				B6CF2F172F7670F4002F0ACC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B6C581C62F6A9D5B00A8AA4E /* Products */;
 			projectDirPath = "";
@@ -185,9 +197,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ShopDemo/Pods-ShopDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ShopDemo/Pods-ShopDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -414,6 +430,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B6B260112F7529BC009FFAFB /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.8.0;
+			};
+		};
+		B6CF2F172F7670F4002F0ACC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B6B260122F7529BC009FFAFB /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6B260112F7529BC009FFAFB /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		B6CF2F182F767227002F0ACC /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6CF2F172F7670F4002F0ACC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B6CF2F1A2F767227002F0ACC /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6CF2F172F7670F4002F0ACC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		B6CF2F1C2F767227002F0ACC /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6CF2F172F7670F4002F0ACC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B6C581BD2F6A9D5B00A8AA4E /* Project object */;
 }
