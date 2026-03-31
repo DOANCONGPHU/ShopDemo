@@ -7,6 +7,9 @@
 
 import UIKit
 
+protocol ProductCellDelegate: AnyObject {
+    func didAddToCart(on cell : ProductCell)
+}
 class ProductCell: UITableViewCell {
     
     @IBOutlet weak var ratingLabel: UILabel!
@@ -14,6 +17,9 @@ class ProductCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var addtoCartBtn: UIButton!
     @IBOutlet weak var productImageView: UIImageView!
+    
+    weak var delegate : ProductCellDelegate?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -28,6 +34,7 @@ class ProductCell: UITableViewCell {
         ratingLabel.text = getRatingStars(rating: product.rating)
         productImageView.LoadImage(from: product.thumbnail)
     }
+    
     func getRatingStars(rating: Double) -> String {
         let fullStars = Int(rating)
         let emptyStars = 5 - fullStars
@@ -35,4 +42,10 @@ class ProductCell: UITableViewCell {
         let stars = String(repeating: "⭐ ", count: fullStars) + String(repeating: " ", count: emptyStars)
         return "\(stars) \(rating)"
     }
+    
+    @IBAction func addToCartTapped(_ sender: UIButton) {
+        print("tappp")
+        delegate?.didAddToCart(on: self)
+    }
+    
 }

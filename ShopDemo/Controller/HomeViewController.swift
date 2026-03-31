@@ -75,6 +75,7 @@ extension HomeViewController: UITableViewDataSource {
     private func configureProductCell(at indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProductCell", for: indexPath) as! ProductCell
         cell.configure(with: viewModel.filteredProducts[indexPath.row])
+        cell.delegate = self
         return cell
     }
 }
@@ -144,5 +145,24 @@ extension HomeViewController : UISearchBarDelegate {
             .instantiateInitialViewController() as! SearchResultViewController
         searchVC.keyword = keyword
         navigationController?.pushViewController(searchVC, animated: true)
+    }
+}
+
+extension HomeViewController: ProductCellDelegate {
+    func didAddToCart(on cell: ProductCell) {
+
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        guard indexPath.section == 1 else { return }
+        
+        guard indexPath.row < viewModel.filteredProducts.count else { return }
+        let product = viewModel.filteredProducts[indexPath.row]
+        
+        CartManager.shared.addToCart(product: product)
+        
+        // Badge
+        if let cartTab = tabBarController?.tabBar.items?[2] {
+            let count = CartManager.shared.cartItems.count
+            cartTab.badgeValue = count > 0 ? "\(count)" : nil
+        }
     }
 }

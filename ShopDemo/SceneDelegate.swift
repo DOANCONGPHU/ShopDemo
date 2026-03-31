@@ -15,17 +15,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        window = UIWindow(windowScene: windowScene)
-        
-        if AuthManager.shared.isLoggedIn {
-            window?.rootViewController = UIStoryboard(name: "Main", bundle: nil)
-                .instantiateInitialViewController()
-        } else {
-            window?.rootViewController = UIStoryboard(name: "Login", bundle: nil)
-                .instantiateInitialViewController()
-        }
-        
-        window?.makeKeyAndVisible()
+//        window = UIWindow(windowScene: windowScene)
+//        
+//        if AuthManager.shared.isLoggedIn {
+//            window?.rootViewController = UIStoryboard(name: "Main", bundle: nil)
+//                .instantiateInitialViewController()
+//        } else {
+//            window?.rootViewController = UIStoryboard(name: "Login", bundle: nil)
+//                .instantiateInitialViewController()
+//        }
+//        
+//        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

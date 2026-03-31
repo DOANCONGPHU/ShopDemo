@@ -20,7 +20,6 @@ class HomeViewModel {
     weak var delegate: HomeViewModelDelegate?
     var filteredProducts: [Product] = []
     var banners: [Product] = []
-    var products : [Product] = []
     var categories: [Category] = []
     var productDetail: Product?
     var productSearch: [Product] = []
@@ -112,6 +111,7 @@ class HomeViewModel {
             }
         }
     }
+    
     private func errorMessage(_ error: NetworkError) -> String {
         switch error {
         case .invalidURL:            return "URL không hợp lệ"
