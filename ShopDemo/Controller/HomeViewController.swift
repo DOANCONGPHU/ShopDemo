@@ -150,7 +150,6 @@ extension HomeViewController : UISearchBarDelegate {
 
 extension HomeViewController: ProductCellDelegate {
     func didAddToCart(on cell: ProductCell) {
-
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         guard indexPath.section == 1 else { return }
         

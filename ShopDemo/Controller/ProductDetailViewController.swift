@@ -17,6 +17,8 @@ class ProductDetailViewController: UIViewController {
     @IBOutlet weak var addToCartBtn: UIButton!
     @IBOutlet weak var describleTxt: UITextView!
     
+    @IBOutlet weak var reviewContainerView: ReviewContainerView!
+    
     var productID : Int?
     let viewModel = HomeViewModel()
     
@@ -25,6 +27,7 @@ class ProductDetailViewController: UIViewController {
         title = "ShopDemo"
         setupViewModel()
         setupCollectionView()
+        reviewContainerView.isHidden = true
     }
     
     private func setupViewModel(){
@@ -68,6 +71,12 @@ class ProductDetailViewController: UIViewController {
             animated: false,
             scrollPosition: .left
         )
+        
+        if PurchaseManager.shared.isPurchased(productID: productID!) {
+            reviewContainerView.isHidden = false
+        } else {
+            reviewContainerView.isHidden = true
+        }
     }
 
 

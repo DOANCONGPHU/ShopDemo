@@ -44,7 +44,7 @@ class ProductCell: UITableViewCell {
     }
     
     @IBAction func addToCartTapped(_ sender: UIButton) {
-        print("tappp")
+        print("them san pham vao gio")
         delegate?.didAddToCart(on: self)
     }
     

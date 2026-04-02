@@ -8,8 +8,8 @@
 import UIKit
 
 protocol CartCellDelegate: AnyObject {
-    func removeProduct(productID : Int)
-    func didChangeQuantity(productID: Int, quantity: Int)
+    func removeProduct(on cell : CartCell)
+    func didChangeQuantity(on cell : CartCell, isIncrease : Bool)
 }
 
 class CartCell: UITableViewCell {
@@ -38,21 +38,34 @@ class CartCell: UITableViewCell {
         stackViewStepper.layer.cornerRadius = 8
         
         imageProduct.layer.cornerRadius = 8
-//        increaseBtn.layer.borderWidth = 1
-//        decreaseBtn.layer.borderWidth = 1
-//        quantityLbl.layer.borderWidth = 1
-//        
-//        quantityLbl.layer.borderColor = UIColor.lightGray.cgColor
-//        increaseBtn.layer.borderColor = UIColor.lightGray.cgColor
-//        decreaseBtn.layer.borderColor = UIColor.lightGray.cgColor
-    }
+ }
     
-    func configure(with item: Product){
-        nameProduct.text = item.title
-        priceProduct.text = "$\(item.price)"
-        imageProduct.LoadImage(from: item.thumbnail)
+    func configure(with item: CartItem){
+        nameProduct.text = item.product.title
+        priceProduct.text = "$\(item.product.price)"
+        imageProduct.LoadImage(from: item.product.thumbnail)
         
+        updateQuantity(item.quantity)
     }
     
-
+    @IBAction func didTapRemoveProduct(_ sender: UIButton) {
+        delegate?.removeProduct(on: self)
+    }
+    
+    @IBAction func didTapIncrease(_ sender: UIButton) {
+        delegate?.didChangeQuantity(on : self, isIncrease: true)
+    }
+    
+    @IBAction func didTapDecrease(_ sender: UIButton) {
+        delegate?.didChangeQuantity(on : self, isIncrease: false)
+    }
+    
+    func updateQuantity(_ quantity: Int) {
+        quantityLbl.text = "\(quantity)"
+        if quantity > 1 {
+            decreaseBtn.isEnabled = true
+        } else {
+            decreaseBtn.isEnabled = false
+        }
+    }
 }

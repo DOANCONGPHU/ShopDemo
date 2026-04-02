@@ -11,15 +11,49 @@ class CartManager{
     static let shared = CartManager()
     private init(){ }
     
-    var cartItems: [Product] = []
+    var cartItems: [CartItem] = []
     
     func addToCart(product : Product) {
-        cartItems.append(product)
+        if let index = cartItems.firstIndex(where: { $0.product.id == product.id}) {
+            cartItems[index].quantity += 1
+            print("cap nhat them so luong khi add to cart")
+            NotificationCenter.default.post(name: .cartUpdated, object: nil, userInfo: ["productID" : product.id, "action" : "update"])
+        }else{
+            cartItems.append(CartItem(product: product, quantity: 1))
+            NotificationCenter.default.post(name: .cartUpdated,
+                                            object: nil,
+                                            userInfo: ["productID" : product.id, "action" : "add"])
+        }
+        
     }
     
     func totalPrice() -> Double {
-        return cartItems.reduce(0) { $0 + $1.price }
+        return cartItems.reduce(0) { $0 + $1.totalPrice }
     }
     
+    func removeItem(at index: Int) {
+        print("--- DEBUG REMOVE ---")
+        print("Mảng đang có: \(cartItems.count) phần tử")
+        print("Đang yêu cầu xóa index: \(index)")
+        
+        if cartItems.indices.contains(index) {
+            cartItems.remove(at: index)
+        } else {
+            print("CẢNH BÁO: Index không tồn tại!")
+        }
+    }
+
+    func increaseQuantity(at index: Int) {
+        cartItems[index].quantity += 1
+    }
     
+    func decreaseQuantity(at index: Int) {
+        cartItems[index].quantity -= 1
+
+    }
+    
+    func clearCart() {
+        cartItems.removeAll()
+    }
+
 }
