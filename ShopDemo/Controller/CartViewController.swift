@@ -71,8 +71,8 @@ class CartViewController: UIViewController {
         PurchaseManager.shared.addPurchased(productIDs: purchasedIDs)
         CartManager.shared.clearCart()
         showAlert(message: "Thanh toán thành công, có thể đánh giá")
-        
         tableViewCart.reloadData()
+        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
     }
     
     func showAlert(message: String) {
@@ -89,8 +89,9 @@ extension CartViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CartCell", for: indexPath) as! CartCell
-        print("DEBUG: Quantity: \(items[indexPath.row].quantity)")
+        print("debug : quantity: \(items[indexPath.row].quantity)")
         cell.configure(with: items[indexPath.row])
+        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
         cell.delegate = self
         return cell
     }
@@ -101,6 +102,7 @@ extension CartViewController : CartCellDelegate {
         guard let indexPath = tableViewCart.indexPath(for: cell) else {return}
         CartManager.shared.removeItem(at: indexPath.row)
         tableViewCart.deleteRows(at: [indexPath], with: .left)
+        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
     }
     
     func didChangeQuantity(on cell: CartCell, isIncrease: Bool) {

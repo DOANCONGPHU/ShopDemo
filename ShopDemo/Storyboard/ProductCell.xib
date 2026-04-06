@@ -72,7 +72,7 @@
                 <outlet property="productImageView" destination="3Ui-Kg-dkC" id="gPP-If-ySS"/>
                 <outlet property="ratingLabel" destination="Fko-9b-hVM" id="x1t-3i-pkq"/>
             </connections>
-            <point key="canvasLocation" x="-147" y="100"/>
+            <point key="canvasLocation" x="-148.09160305343511" y="99.647887323943664"/>
         </tableViewCell>
     </objects>
 </document>

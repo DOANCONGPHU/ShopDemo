@@ -60,7 +60,7 @@
                                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ebQ-95-z8O">
                                                     <rect key="frame" x="0.0" y="8" width="440" height="284"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="160" id="3Qq-JU-Axe"/>
+                                                        <constraint firstAttribute="height" priority="999" constant="160" id="3Qq-JU-Axe"/>
                                                     </constraints>
                                                     <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="10" id="RbT-kP-d9X">
                                                         <size key="itemSize" width="440" height="161"/>

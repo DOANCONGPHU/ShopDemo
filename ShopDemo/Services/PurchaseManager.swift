@@ -13,6 +13,7 @@ class PurchaseManager {
     private let purchasedKey = "purchasedProductIDs"
     private let reviewKey = "reviewedProductIDs"
     
+    //Purchase
     var purchasedIDs: [Int] {
         get { UserDefaults.standard.array(forKey: purchasedKey) as? [Int] ?? [] }
         set { UserDefaults.standard.set(newValue, forKey: purchasedKey) }
@@ -34,17 +35,23 @@ class PurchaseManager {
         return purchasedIDs.contains(productID)
     }
 
+    //Review
+    var reviewedIDs: [Int] {
+        get { UserDefaults.standard.array(forKey: reviewKey) as? [Int] ?? [] }
+        set { UserDefaults.standard.set(newValue, forKey: reviewKey) }
+    }
+    
     func markAsReviewed(productID: Int) {
         if !isReviewed(productID: productID) {
-            var reviewedIDS = UserDefaults.standard.array(forKey: reviewKey) as? [Int] ?? []
-            reviewedIDS.append(productID)
-            UserDefaults.standard.set(reviewedIDS, forKey: reviewKey)
+            reviewedIDs.append(productID)
+            UserDefaults.standard.set(reviewedIDs, forKey: reviewKey)
+        }else {
+            print("id: \(productID) đã được review rồi")
         }
     }
     
     func isReviewed(productID: Int) -> Bool {
-        var reviewedIDS = UserDefaults.standard.array(forKey: reviewKey) as? [Int] ?? []
-        return reviewedIDS.contains(productID)
+        return reviewedIDs.contains(productID)
     }
 
 }

@@ -16,7 +16,7 @@ class ProductDetailViewController: UIViewController {
     @IBOutlet weak var buyNowBtn: UIButton!
     @IBOutlet weak var addToCartBtn: UIButton!
     @IBOutlet weak var describleTxt: UITextView!
-    
+    @IBOutlet weak var reviewResultView: ReviewResultView!
     @IBOutlet weak var reviewContainerView: ReviewContainerView!
     
     var productID : Int?
@@ -27,7 +27,11 @@ class ProductDetailViewController: UIViewController {
         title = "ShopDemo"
         setupViewModel()
         setupCollectionView()
-        reviewContainerView.isHidden = true
+        setupReviewContainer()
+    }
+    
+    private func setupReviewContainer() {
+        reviewContainerView.delegate = self
     }
     
     private func setupViewModel(){
@@ -54,6 +58,25 @@ class ProductDetailViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
     }
     
+    fileprivate func configReviewUI() {
+        //Hiển thị kết quả khi đã review
+        if PurchaseManager.shared.isReviewed(productID: productID!) {
+            reviewResultView.isHidden = false
+            reviewContainerView.isHidden = true
+            if let savedData = ReviewManager.shared.getReviewLocal(productID: productID!) {
+                self.reviewResultView.data = savedData
+                    }
+        }else {
+            reviewResultView.isHidden = true
+            //Cho đánh giá cho sản phẩm đã thanh toán
+            if PurchaseManager.shared.isPurchased(productID: productID!) {
+                reviewContainerView.isHidden = false
+            } else {
+                reviewContainerView.isHidden = true
+            }
+        }
+    }
+    
     func configure() {
         guard let product = viewModel.productDetail else { return }
         
@@ -72,14 +95,8 @@ class ProductDetailViewController: UIViewController {
             scrollPosition: .left
         )
         
-        if PurchaseManager.shared.isPurchased(productID: productID!) {
-            reviewContainerView.isHidden = false
-        } else {
-            reviewContainerView.isHidden = true
-        }
+        configReviewUI()
     }
-
-
 }
 
 extension ProductDetailViewController : UICollectionViewDelegate, UICollectionViewDataSource {
@@ -100,6 +117,7 @@ extension ProductDetailViewController : UICollectionViewDelegate, UICollectionVi
         imageViewProduct.LoadImage(from: url)
     }
 }
+
 extension ProductDetailViewController : HomeViewModelDelegate {
     func didUpdateProductDetail() {
         DispatchQueue.main.async {
@@ -115,7 +133,88 @@ extension ProductDetailViewController : HomeViewModelDelegate {
     func didUpdateSearchResults() {}
     func didUpdateProducts() {}
     func didUpdateBanners() {}
+}
+
+extension ProductDetailViewController: ReviewContainerDelegate{
+    func didTapUpLoadImage() {
+        
+        let alert = UIAlertController(title: "Chọn ảnh", message: nil, preferredStyle: .actionSheet)
+        
+        // Camera
+        alert.addAction(UIAlertAction(title: "Camera", style: .default, handler: { _ in
+            #if targetEnvironment(simulator)
+            print("Đang chạy máy ảo - không hỗ trợ camera")
+            #else
+            self.openCamera()
+            #endif
+        }))
+        
+        // Thư viện
+        alert.addAction(UIAlertAction(title: "Thư viện", style: .default, handler: { _ in
+            self.openLibrary()
+        }))
+        
+        // Huỷ
+        alert.addAction(UIAlertAction(title: "Huỷ", style: .cancel))
+        
+        self.present(alert, animated: true)
+    }
     
+    func openCamera() {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        self.present(picker, animated: true)
+    }
     
+    func openLibrary() {
+        let picker = UIImagePickerController()
+        picker.sourceType = .photoLibrary
+        picker.delegate = self
+        self.present(picker, animated: true)
+    }
     
+    func didTapSendReview(content: String, rate: Int) {
+        guard let currentID = self.productID else { return }
+        
+        PurchaseManager.shared.markAsReviewed(productID: currentID)
+        
+        let imagesAsData = self.reviewContainerView.selectedImages.compactMap { image in
+            return image.jpegData(compressionQuality: 0.2)
+        }
+        
+        let newReview = ProductReview(
+            productId: currentID,
+            content: content,
+            rate: rate,
+            imagesData: imagesAsData
+        )
+        
+        UIView.animate(withDuration: 0.3) {
+            ReviewManager.shared.saveReviewLocal(review: newReview)
+            
+            self.reviewResultView.data = newReview
+            self.configReviewUI()
+            
+            self.view.layoutIfNeeded()
+        }
+    }
+}
+
+extension ProductDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if let image = info[.originalImage] as? UIImage {
+            print("Đã chọn ảnh: \(image)")
+            self.reviewContainerView.selectedImages.append(image)
+        }
+        
+        picker.dismiss(animated: true)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
 }

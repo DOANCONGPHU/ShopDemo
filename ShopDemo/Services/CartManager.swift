@@ -32,15 +32,8 @@ class CartManager{
     }
     
     func removeItem(at index: Int) {
-        print("--- DEBUG REMOVE ---")
-        print("Mảng đang có: \(cartItems.count) phần tử")
-        print("Đang yêu cầu xóa index: \(index)")
-        
-        if cartItems.indices.contains(index) {
-            cartItems.remove(at: index)
-        } else {
-            print("CẢNH BÁO: Index không tồn tại!")
-        }
+        cartItems.remove(at: index)
+
     }
 
     func increaseQuantity(at index: Int) {
