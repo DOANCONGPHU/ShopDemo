@@ -8,16 +8,16 @@
 import UIKit
 
 class HomeViewController: UIViewController {
-    @IBOutlet weak var tableView: UITableView!
-    let viewModel = HomeViewModel()
-    var selectedCategoryIndex = 0
+    @IBOutlet private weak var tableView: UITableView!
+    private let viewModel = HomeViewModel()
+    private var selectedCategoryIndex = 0
+    weak var coordinator: AppCoordinator?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigation()
         setupTableView()
         setupViewModel()
-     
     }
     
     private func setupNavigation() {
@@ -43,6 +43,7 @@ class HomeViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
 extension HomeViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -61,11 +62,15 @@ extension HomeViewController: UITableViewDataSource {
     
     private func configureTopSection(at indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "BannerCell", for: indexPath) as! BannerCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "BannerCell", for: indexPath) as? BannerCell else {
+                return UITableViewCell()
+            }
             cell.configure(with: viewModel.banners)
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {
+                return UITableViewCell()
+            }
             cell.config(with: viewModel.categories)
             cell.delegate = self
             cell.selectedIndex = selectedCategoryIndex
@@ -74,13 +79,16 @@ extension HomeViewController: UITableViewDataSource {
     }
     
     private func configureProductCell(at indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ProductCell", for: indexPath) as! ProductCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProductCell", for: indexPath) as? ProductCell else {
+            return UITableViewCell()
+        }
         cell.configure(with: viewModel.filteredProducts[indexPath.row])
         cell.delegate = self
         return cell
     }
 }
 
+// MARK: - UITableViewDelegate
 extension HomeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -88,30 +96,25 @@ extension HomeViewController: UITableViewDelegate {
         guard indexPath.section == 1 else { return }
         
         let product = viewModel.filteredProducts[indexPath.row]
-        navigateToDetail(with: product.id)
+        coordinator?.showProductDetail(productID: product.id)
     }
     
-    private func navigateToDetail(with productID: Int) {
-        let storyboard = UIStoryboard(name: "ProductDetail", bundle: nil)
-        guard let detailVC = storyboard.instantiateInitialViewController() as? ProductDetailViewController else { return }
-        
-        detailVC.productID = productID
-        navigationController?.pushViewController(detailVC, animated: true)
-    }
 }
 
-
+// MARK: - CategoryDelegate
 extension HomeViewController: CategoryDelegate {
-    func didSelectCategory(_ category: Category,at index : Int) {
+    func didSelectCategory(_ category: Category, at index: Int) {
         selectedCategoryIndex = index
         viewModel.fetchCategoryDetail(category: category)
     }
 }
+
+// MARK: - HomeViewModelDelegate
 extension HomeViewController: HomeViewModelDelegate {
     
     private func reloadTableSection(_ section: Int) {
-        DispatchQueue.main.async {
-            self.tableView.reloadSections(IndexSet(integer: section), with: .automatic)
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadSections(IndexSet(integer: section), with: .automatic)
         }
     }
     
@@ -135,20 +138,19 @@ extension HomeViewController: HomeViewModelDelegate {
     func didUpdateSearchResults() {}
 }
 
-extension HomeViewController : UISearchBarDelegate {
+// MARK: - UISearchBarDelegate
+extension HomeViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let keyword = searchBar.text,
               !keyword.isEmpty else { return }
         
         searchBar.resignFirstResponder()
         
-        let searchVC = UIStoryboard(name: "SearchResult", bundle: nil)
-            .instantiateInitialViewController() as! SearchResultViewController
-        searchVC.keyword = keyword
-        navigationController?.pushViewController(searchVC, animated: true)
+        coordinator?.showSearchResult(keyword: keyword)
     }
 }
 
+// MARK: - ProductCellDelegate
 extension HomeViewController: ProductCellDelegate {
     func didAddToCart(on cell: ProductCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }

@@ -145,7 +145,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VZ3-Py-mZe">
                             <rect key="frame" x="0.0" y="388" width="393" height="150"/>
                             <subviews>
-                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Chia sẻ nhận xét!" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="7to-kG-0ch">
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="7to-kG-0ch">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="150"/>
                                     <color key="backgroundColor" red="0.93440290689468386" green="0.93440290689468386" blue="0.93440290689468386" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

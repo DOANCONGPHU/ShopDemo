@@ -21,6 +21,8 @@ class ReviewContainerView: UIView {
     @IBOutlet weak var upLoadCollection: UICollectionView!
     @IBOutlet var starButtons: [UIButton]!
     
+    let placeholderText = "Hãy chia sẻ nhận xét cho sản phẩm này bạn nhé!"
+    
     weak var delegate : ReviewContainerDelegate?
     var currentStar : Int = 0
     
@@ -42,6 +44,7 @@ class ReviewContainerView: UIView {
         setupCollection()
     }
     
+    
     private func setupCollection() {
         let imageNib = UINib(nibName: "ImageUpLoadCell", bundle: nil)
         upLoadCollection.register(imageNib, forCellWithReuseIdentifier: "ImageUpLoadCell")
@@ -61,6 +64,10 @@ class ReviewContainerView: UIView {
         view.frame = bounds
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(view)
+        
+        reviewTxt.delegate = self
+        reviewTxt.text = placeholderText
+        reviewTxt.textColor = .lightGray
     }
     
     @IBAction func starTapped(_ sender: UIButton) {
@@ -83,6 +90,8 @@ class ReviewContainerView: UIView {
         reviewTxt.text = ""
         currentStar = 0
     }
+    
+
     
 }
 
@@ -144,3 +153,19 @@ extension ReviewContainerView : ImageUpLoadCellDelegate {
     
 }
 
+extension ReviewContainerView: UITextViewDelegate {
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.text == placeholderText {
+            textView.text = ""
+            textView.textColor = .black
+        }
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            textView.text = placeholderText
+            textView.textColor = .lightGray
+        }
+    }
+}

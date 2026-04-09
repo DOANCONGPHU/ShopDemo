@@ -116,6 +116,7 @@
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="MQy-wT-eYV" secondAttribute="bottom" id="Lbm-PZ-NIK"/>
                 <constraint firstItem="MQy-wT-eYV" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="LxG-Bc-tiI"/>
             </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="139.69465648854961" y="101.40845070422536"/>
         </view>
     </objects>

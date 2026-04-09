@@ -8,19 +8,19 @@
 import UIKit
 
 class ProductDetailViewController: UIViewController {
-    @IBOutlet weak var collectionViewProduct: UICollectionView!
-    @IBOutlet weak var imageViewProduct: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var priceLabel: UILabel!
-    @IBOutlet weak var ratingLabel: UILabel!
-    @IBOutlet weak var buyNowBtn: UIButton!
-    @IBOutlet weak var addToCartBtn: UIButton!
-    @IBOutlet weak var describleTxt: UITextView!
-    @IBOutlet weak var reviewResultView: ReviewResultView!
-    @IBOutlet weak var reviewContainerView: ReviewContainerView!
+    @IBOutlet private weak var collectionViewProduct: UICollectionView!
+    @IBOutlet private weak var imageViewProduct: UIImageView!
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var priceLabel: UILabel!
+    @IBOutlet private weak var ratingLabel: UILabel!
+    @IBOutlet private weak var buyNowBtn: UIButton!
+    @IBOutlet private weak var addToCartBtn: UIButton!
+    @IBOutlet private weak var descriptionTextView: UITextView!
+    @IBOutlet private weak var reviewResultView: ReviewResultView!
+    @IBOutlet private weak var reviewContainerView: ReviewContainerView!
     
     var productID : Int?
-    let viewModel = HomeViewModel()
+    private let viewModel = HomeViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,7 +45,13 @@ class ProductDetailViewController: UIViewController {
     private func setupCollectionView() {
         collectionViewProduct.dataSource = self
         collectionViewProduct.delegate = self
-
+    }
+    
+    private func presentImagePicker(sourceType: UIImagePickerController.SourceType) {
+        let picker = UIImagePickerController()
+        picker.sourceType = sourceType
+        picker.delegate = self
+        present(picker, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,17 +65,20 @@ class ProductDetailViewController: UIViewController {
     }
     
     fileprivate func configReviewUI() {
-        //Hiển thị kết quả khi đã review
-        if PurchaseManager.shared.isReviewed(productID: productID!) {
+        guard let id = productID else {
+            reviewResultView.isHidden = true
+            reviewContainerView.isHidden = true
+            return
+        }
+        if PurchaseManager.shared.isReviewed(productID: id) {
             reviewResultView.isHidden = false
             reviewContainerView.isHidden = true
-            if let savedData = ReviewManager.shared.getReviewLocal(productID: productID!) {
-                self.reviewResultView.data = savedData
-                    }
-        }else {
+            if let savedData = ReviewManager.shared.getReviewLocal(productID: id) {
+                reviewResultView.data = savedData
+            }
+        } else {
             reviewResultView.isHidden = true
-            //Cho đánh giá cho sản phẩm đã thanh toán
-            if PurchaseManager.shared.isPurchased(productID: productID!) {
+            if PurchaseManager.shared.isPurchased(productID: id) {
                 reviewContainerView.isHidden = false
             } else {
                 reviewContainerView.isHidden = true
@@ -79,26 +88,27 @@ class ProductDetailViewController: UIViewController {
     
     func configure() {
         guard let product = viewModel.productDetail else { return }
-        
-        nameLabel.text = product.title
-        priceLabel.text = "$\(product.price)"
-        ratingLabel.text = "⭐ \(product.rating)"
-        describleTxt.text = product.description
-        imageViewProduct.LoadImage(from: product.thumbnail)
-        
-        collectionViewProduct.reloadData()
-        
-        guard !product.images.isEmpty else { return }
-        collectionViewProduct.selectItem(
-            at: IndexPath(item: 0, section: 0),
-            animated: false,
-            scrollPosition: .left
-        )
-        
-        configReviewUI()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.nameLabel.text = product.title
+            self.priceLabel.text = "$\(product.price)"
+            self.ratingLabel.text = "⭐ \(product.rating)"
+            self.descriptionTextView.text = product.description
+            self.imageViewProduct.LoadImage(from: product.thumbnail)
+            self.collectionViewProduct.reloadData()
+            if !product.images.isEmpty {
+                self.collectionViewProduct.selectItem(
+                    at: IndexPath(item: 0, section: 0),
+                    animated: false,
+                    scrollPosition: .left
+                )
+            }
+            self.configReviewUI()
+        }
     }
 }
 
+// MARK: - UICollectionViewDataSource & Delegate
 extension ProductDetailViewController : UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.productDetail?.images.count ?? 0
@@ -118,6 +128,7 @@ extension ProductDetailViewController : UICollectionViewDelegate, UICollectionVi
     }
 }
 
+// MARK: - HomeViewModelDelegate
 extension ProductDetailViewController : HomeViewModelDelegate {
     func didUpdateProductDetail() {
         DispatchQueue.main.async {
@@ -135,6 +146,7 @@ extension ProductDetailViewController : HomeViewModelDelegate {
     func didUpdateBanners() {}
 }
 
+// MARK: - ReviewContainerDelegate
 extension ProductDetailViewController: ReviewContainerDelegate{
     func didTapUpLoadImage() {
         
@@ -161,17 +173,11 @@ extension ProductDetailViewController: ReviewContainerDelegate{
     }
     
     func openCamera() {
-        let picker = UIImagePickerController()
-        picker.sourceType = .camera
-        picker.delegate = self
-        self.present(picker, animated: true)
+        presentImagePicker(sourceType: .camera)
     }
     
     func openLibrary() {
-        let picker = UIImagePickerController()
-        picker.sourceType = .photoLibrary
-        picker.delegate = self
-        self.present(picker, animated: true)
+        presentImagePicker(sourceType: .photoLibrary)
     }
     
     func didTapSendReview(content: String, rate: Int) {
@@ -201,6 +207,7 @@ extension ProductDetailViewController: ReviewContainerDelegate{
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate
 extension ProductDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController,

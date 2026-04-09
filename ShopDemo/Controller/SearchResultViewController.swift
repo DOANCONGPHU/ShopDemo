@@ -12,6 +12,7 @@ class SearchResultViewController: UIViewController{
     @IBOutlet weak var tableView: UITableView!
     var keyword: String = ""
     let viewModel = HomeViewModel()
+    weak var coordinator: AppCoordinator?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +29,7 @@ class SearchResultViewController: UIViewController{
     }
 
 }
+
 extension SearchResultViewController : UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView,
                             numberOfRowsInSection section: Int) -> Int {
@@ -44,12 +46,10 @@ extension SearchResultViewController : UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView,
                             didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let detailVC = UIStoryboard(name: "ProductDetail", bundle: nil)
-            .instantiateInitialViewController() as! ProductDetailViewController
-        detailVC.productID = viewModel.productSearch[indexPath.row].id
-        navigationController?.pushViewController(detailVC, animated: true)
+        coordinator?.showProductDetail(productID: viewModel.productSearch[indexPath.row].id)
     }
 }
+
 extension SearchResultViewController : HomeViewModelDelegate{
     func didUpdateSearchResults() {
         DispatchQueue.main.async {

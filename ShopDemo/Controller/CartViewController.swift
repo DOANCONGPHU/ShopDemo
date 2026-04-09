@@ -13,8 +13,8 @@ class CartViewController: UIViewController {
     @IBOutlet weak var totalPriceLbl: UILabel!
     @IBOutlet weak var checkOutBtn: UIButton!
 
-    var items: [CartItem] {
-            return CartManager.shared.cartItems
+    private var items: [CartItem] {
+        return CartManager.shared.cartItems
     }
     
     override func viewDidLoad() {
@@ -31,22 +31,30 @@ class CartViewController: UIViewController {
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-        print("Cart bi huy")
+        print("CartViewController deinit")
     }
-    func setUp() {
+
+    private func setUp() {
         checkOutBtn.layer.cornerRadius = 8
         
         tableViewCart.delegate = self
         tableViewCart.dataSource = self
-
     }
+    
+    private func updateTotalPriceLabel() {
+        let total = CartManager.shared.totalPrice()
+        totalPriceLbl.text = "$\(String(format: "%.2f", total))"
+    }
+
     //Update thong tin tu Home
     @objc func cartUpdated(_ notification : Notification) {
-        guard let productInfo = notification.userInfo,
-              let productID = productInfo["productID"] as? Int,
-              let action = productInfo["action"] as? String else { return }
-        
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            guard let productInfo = notification.userInfo,
+                  let productID = productInfo["productID"] as? Int,
+                  let action = productInfo["action"] as? String else { return }
+            
             switch action {
             case "update":
                 print("them quantity")
@@ -59,9 +67,8 @@ class CartViewController: UIViewController {
             default:
                 break
             }
+            self.updateTotalPriceLabel()
         }
-        
-        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
     }
     
     //Thanh toan
@@ -72,16 +79,17 @@ class CartViewController: UIViewController {
         CartManager.shared.clearCart()
         showAlert(message: "Thanh toán thành công, có thể đánh giá")
         tableViewCart.reloadData()
-        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
+        updateTotalPriceLabel()
     }
     
-    func showAlert(message: String) {
+    private func showAlert(message: String) {
         let alert = UIAlertController(title: "Thông báo",message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
 }
 
+// MARK: - UITableViewDataSource & UITableViewDelegate
 extension CartViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
@@ -91,18 +99,19 @@ extension CartViewController : UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CartCell", for: indexPath) as! CartCell
         print("debug : quantity: \(items[indexPath.row].quantity)")
         cell.configure(with: items[indexPath.row])
-        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
+        updateTotalPriceLabel()
         cell.delegate = self
         return cell
     }
 }
-// Nhan thong bao tu Cell
+
+// MARK: - CartCellDelegate
 extension CartViewController : CartCellDelegate {
     func removeProduct(on cell: CartCell) {
         guard let indexPath = tableViewCart.indexPath(for: cell) else {return}
         CartManager.shared.removeItem(at: indexPath.row)
         tableViewCart.deleteRows(at: [indexPath], with: .left)
-        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
+        updateTotalPriceLabel()
     }
     
     func didChangeQuantity(on cell: CartCell, isIncrease: Bool) {
@@ -110,7 +119,7 @@ extension CartViewController : CartCellDelegate {
         
         if isIncrease == true {
             CartManager.shared.increaseQuantity(at: indexPath.row)
-        }else {
+        } else {
             CartManager.shared.decreaseQuantity(at: indexPath.row)
         }
         
@@ -121,10 +130,13 @@ extension CartViewController : CartCellDelegate {
             cell.updateQuantity(newQuantity)
         }
 
-        totalPriceLbl.text = "$\(String(format: "%.2f", CartManager.shared.totalPrice()))"
+        updateTotalPriceLabel()
     }
 }
 
+// MARK: - Notifications
 extension NSNotification.Name {
     static let cartUpdated = NSNotification.Name("cartUpdated")
 }
+
+
